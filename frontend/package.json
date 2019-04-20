@@ -1,0 +1,9 @@
+{
+  "name": "http-mail-send-frontend",
+  "version": "0.0.1",
+  "description": "Sends mail via to http-mail-send-service.",
+  "main": "src/index.js",
+  "scripts": {},
+  "author": "Tristan Davey",
+  "license": "MIT"
+}

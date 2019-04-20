@@ -1,0 +1,34 @@
+{
+  "name": "http-mail-send-service",
+  "version": "0.0.1",
+  "description": "Sends mail via HTTP with redundant failover.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node .",
+    "test": "./node_modules/.bin/jest",
+    "cov": "./node_modules/.bin/jest --coverage",
+    "lint": "./node_modules/.bin/eslint ./src"
+  },
+  "author": "Tristan Davey",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "jest": "^24.7.1"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "commonjs": true,
+      "jest": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 2017
+    }
+  }
+}

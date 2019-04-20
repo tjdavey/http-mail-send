@@ -1,0 +1,16 @@
+version: "2"
+
+services:
+  service:
+    build:
+      context: ./service
+    container_name: 'http-mail-send-service'
+    command: "npm start"
+
+  service-test:
+    build:
+      context: ./service
+    container_name: 'http-mail-send-service-test'
+    environment:
+      - NODE_ENV=test
+    command: "npm test"
