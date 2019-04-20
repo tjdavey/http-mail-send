@@ -5,6 +5,8 @@ services:
     build:
       context: ./service
     container_name: 'http-mail-send-service'
+    ports:
+      - '8080:8080'
     command: "npm start"
 
   service-test:
