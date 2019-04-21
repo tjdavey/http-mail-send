@@ -16,9 +16,16 @@
       "options": {
         "from": "noreply@tristandavey.com"
       }
+    },
+    "mailgun": {
+      "module": "./providers/mailgunProvider",
+      "options": {
+        "domain": "sandbox0c601a9d607149deaeff239b4a7e2f26.mailgun.org",
+        "from": "postmaster@sandbox0c601a9d607149deaeff239b4a7e2f26.mailgun.org"
+      }
     }
   },
-  "providerOrder": ["sendgrid", "test"],
+  "providerOrder": ["mailgun", "sendgrid"],
   "providerFailoverOptions": {
     "attempts": 1
   }

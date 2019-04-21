@@ -4,6 +4,11 @@
       "options": {
         "apiKey": "SENDGRID_API_KEY"
       }
+    },
+    "mailgun": {
+      "options": {
+        "apiKey": "MAILGUN_API_KEY"
+      }
     }
   }
 }

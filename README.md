@@ -1,5 +1,64 @@
 # http-mail-send
-Sends mail via HTTP with redundant failover. 
+
+HTTP Mail Send provides a HTTP interface for dispatching emails with
+automatic failover between multiple email service providers. This allows
+you to dispatch email more reliably if one of your providers is
+unavailable. The email service providers, order in which they are
+utilised and failover conditions can be fully configured as required.
+
+## Architecture and Design
+
+### Service
+
+A simple manager which co-ordinates multiple pluggable *provider*
+modules lies at the core of this implementation. This allows easy
+extension of the service using either NPM modules or new files added to
+the service itself. With simple modifications to the configuration these
+new modules can be loaded to implement additional email service
+providers in the service. This minimises code change for simple changes
+to the way the service interacts with email service providers.
+
+The HTTP server implementation is designed to wrap around the contained
+logic with minimal crossover between application logic and server logic.
+This makes the core service code reusable outside a HTTP server if
+ever required.
+
+The Sendgrid and Mailgun providers are implemented as these are the SDKs
+I was most familiar with and both provide trivial interfaces with little
+authentication complexity. The file provider was implemented to assist
+in early debugging.
+
+Hapi was chosen as the HTTP server for its seamless integration with
+async/await and built-in validation using Joi. This provides a simple
+mechanism to validate payloads sent to the /send endpoint ensuring
+security are integrity are managed out of the box.
+
+#### Decisions, Caveats and Known Issues
+
+ - **Tests have been limited to critical paths only due to time
+   constraints.** Easily tested parts (eg providers which can be
+   tested manually with configuration changes) and validation
+   handling have not been tested.
+ - **ProviderManager has a lot of poorly structured code.** This should
+   be broken down further to ease in testing and readability.
+ - **Failover and reattempt logic is simplistic.** Ideally the
+   logic for executing multiple attempts should have a configurable
+   backoff, and possibly allow for short-circuit conditions. This was
+   excluded due to time constraints.
+ - **ProviderManager should be a singleton.** ProviderManager is
+   currently setup as a normal class, but in context should be
+   initialised as a singleton (outside of testing). This is effectively
+   achieved in our application by initialising it with the server
+   however, this is not a recommended practise, and would be refactored
+   with additional time.
+ - **No authentication or CSRF token implementation is included.** It is
+   assumed that this service would be running inside a secured network
+   or behind a secured API and did not require its own security
+   or authentication mechanisms.
+
+### Frontend
+
+#### Decisions, Caveats and Known Issues
 
 ## Getting Started
 
