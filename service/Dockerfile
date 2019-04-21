@@ -4,5 +4,6 @@ WORKDIR /service
 
 COPY package*.json ./
 COPY src ./src
+COPY config ./config
 
 RUN npm install

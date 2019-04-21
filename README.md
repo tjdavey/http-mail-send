@@ -67,16 +67,29 @@ security are integrity are managed out of the box.
 - [Docker](https://docs.docker.com/install/overview/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
+### TL;DR
+
+Detailed instructions are below, but if you just want to run the whole
+app subsitute the appropriate keys as required and run this command.
+
+```
+SENDGRID_API_KEY=<Sendgrid API Key> MAILGUN_API_KEY=<Mailgun API Key> docker-compose up service frontend
+```
+
+
 ### Running the Service
 
 The service can be run with docker and docker-compose  using the
 following commands. It is recommended you pass-through any required
-environment variables (see 'Configuration' section below) using the
+environment variables documented below using the
 [recommended methods](https://docs.docker.com/compose/environment-variables/).
 
 ```
-docker-compose up http-mail-send-service
+docker-compose up service
 ```
+
+Once the service has started (this may take a few minutes) the server
+will be available at http://localhost:8080.
 
 Using the default configuration the following environment variables
 must be defined in order to correctly configure the service.
@@ -93,10 +106,22 @@ You can also run the full set of tests for the service in docker by
  running the following command.
 
 ```
-docker-compose up http-mail-send-service-test
+docker-compose up service-test
 ```
 
 ### Running the Frontend
+
+The service can be run with docker and docker-compose using the
+following commands. The built docker container should NOT be used to
+run the frontend in production.
+
+```
+docker-compose up frontend
+```
+
+Once the frontend server has started (this may take a few minutes) the
+server will be available at http://localhost:8081.
+
 
 ## Configuration
 

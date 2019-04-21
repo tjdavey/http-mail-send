@@ -7,6 +7,9 @@ services:
     container_name: 'http-mail-send-service'
     ports:
       - '8080:8080'
+    environment:
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - MAILGUN_API_KEY=${MAILGUN_API_KEY}
     command: "npm start"
 
   service-test:
@@ -16,3 +19,11 @@ services:
     environment:
       - NODE_ENV=test
     command: "npm test"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: 'http-mail-send-frontend'
+    ports:
+      - '8081:3000'
+    command: "yarn start"
