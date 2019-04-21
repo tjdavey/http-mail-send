@@ -6,13 +6,19 @@
   },
   "providers": {
     "test": {
-      "module": "./providers/file",
+      "module": "./providers/fileProvider",
       "options": {
         "filepath": "./tmp/fileProvider"
       }
+    },
+    "sendgrid": {
+      "module": "./providers/sendgridProvider",
+      "options": {
+        "from": "noreply@tristandavey.com"
+      }
     }
   },
-  "providerOrder": ["test"],
+  "providerOrder": ["sendgrid", "test"],
   "providerFailoverOptions": {
     "attempts": 1
   }

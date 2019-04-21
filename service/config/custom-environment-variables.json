@@ -1,0 +1,9 @@
+{
+  "providers": {
+    "sendgrid": {
+      "options": {
+        "apiKey": "SENDGRID_API_KEY"
+      }
+    }
+  }
+}

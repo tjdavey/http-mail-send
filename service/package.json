@@ -38,6 +38,7 @@
     }
   },
   "dependencies": {
+    "@sendgrid/mail": "^6.3.1",
     "bunyan": "^1.8.12",
     "config": "^3.1.0",
     "good": "^8.1.2",
