@@ -17,9 +17,10 @@ const {setupRoutes} = require('./routes');
  * @param {string} serverOptions.name - A name to uniquely identify this server (used for logging).
  * @param {string} serverOptions.logLevel - The minimum level of log messages to log. One of 'debug', 'info', 'warn',
  *    'error', 'fatal'.
+ * @param {string} serverOptions.app - Global application components available at any time through server.app.
  * @returns {HapiServer}
  */
-async function initServer({host, port, name, logLevel}) {
+async function initServer({host, port, name, logLevel, app}) {
   // Setup a logger for this server and its activity.
   const serverLogger = bunyan.createLogger({name, level: logLevel});
 
@@ -54,6 +55,9 @@ async function initServer({host, port, name, logLevel}) {
         }
       }
     });
+
+    // Add any global app components to server.app
+    server.app = Object.assign({}, server.app, app);
 
     // Start the server.
     await server.start();

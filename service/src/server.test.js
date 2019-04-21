@@ -13,10 +13,12 @@ describe('initServer', () => {
   const TEST_HOST = 'testhost';
   const TEST_NAME = 'test-server';
   const TEST_LOGLEVEL = 'info';
+  const TEST_APP = {app: true};
 
   const hapiServer = {
     register: jest.fn().mockResolvedValue(),
     start: jest.fn().mockResolvedValue(),
+    app: {},
     info: {
       uri: 'testserveruri'
     }
@@ -50,7 +52,8 @@ describe('initServer', () => {
       port: TEST_PORT,
       host: TEST_HOST,
       name: TEST_NAME,
-      logLevel: TEST_LOGLEVEL
+      logLevel: TEST_LOGLEVEL,
+      app: TEST_APP
     });
 
     // Ensure the logger was setup as required
@@ -64,6 +67,9 @@ describe('initServer', () => {
 
     // Ensure plugins were registered. This is a complex object that may change with time. Avoid testing specifics.
     expect(hapiServer.register).toHaveBeenCalled();
+
+    // Ensure the server.app property was initialised with any application globals
+    expect(hapiServer.app).toEqual(TEST_APP);
 
     // Ensure the server started and the correct data was logged
     expect(hapiServer.start).toHaveBeenCalled();

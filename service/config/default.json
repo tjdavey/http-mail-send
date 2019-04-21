@@ -3,5 +3,17 @@
     "host": "localhost",
     "port": 8080,
     "logLevel": "trace"
+  },
+  "providers": {
+    "test": {
+      "module": "./providers/file",
+      "options": {
+        "filepath": "./tmp/fileProvider"
+      }
+    }
+  },
+  "providerOrder": ["test"],
+  "providerFailoverOptions": {
+    "attempts": 1
   }
 }

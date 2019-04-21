@@ -1,0 +1,124 @@
+/**
+ * @typedef {Object} ProviderSendOptions
+ * @desc The standard options for sending an email through any provider.
+ *
+ * @property {string} to - Email recipient.
+ * @property {string} subject - Email subject.
+ * @property {string} body - HTML email body.
+ */
+
+/**
+ * ProviderManager loads multiple email sending providers allowing you to attempt to send email via multiple providers
+ * if one or more providers are unavailable.
+ */
+class ProviderManager {
+
+  /**
+   * Constructs a new ProviderManager; loading, initialising and configuring all configured email providers.
+   *
+   * @param {Object} providerConfig - The provider configuration object containing a key-value pair for each mail
+   *    provider. The value of each pair should be an object containing the key-value pairs documented below. At least
+   *    one provider must be configured.
+   * @param {string} providerConfig.module - The module path to be loaded to initialise this provider.
+   * @param {Object} providerConfig.options - The configuration object to be passed to the provider module on
+   *    initialisation.
+   * @param {Array<String>} providerOrder - Defines the order in which sending emails by the providers should be
+   *    attempted. Each string in this array should match a key in the providerConfig object.
+   * @param {Object} failoverOptions - Defines the parameters under which the providerManager will fail to the next
+   *    provider in providerOrder. Optional.
+   * @param {number} failoverOptions.attempts - Defines the number of attempts with each provider before failing over to
+   *    the next provider in providerOrder. Default: 1.
+   */
+  constructor(providerConfig, providerOrder, failoverOptions) {
+    // Raise exceptions for any serious validation issues with the provided configuration.
+    const providerKeys = Object.keys(providerConfig);
+
+    if(!(providerKeys.length > 0)) {
+      throw new Error('At least one provider must be configured in the configuration file.');
+    }
+
+    if(!Array.isArray(providerOrder)) {
+      throw new Error('providerOrder must be an array.');
+    }
+
+    const missingProviders = providerOrder.filter((requiredProvider) => providerKeys.indexOf(requiredProvider) < 0);
+    if(missingProviders.length != 0) {
+      throw new Error(`All providers in the providerOrder array must be in providerConfig. ` +
+        `The following provider configurations were not found: ${missingProviders.join(', ')}.`);
+    }
+
+    // Set the default failover configuration applying defaults appropriately.
+    this._failoverOptions = Object.assign({}, ProviderManager.FAILOVER_DEFAULTS, failoverOptions || {});
+
+    // Load the configured providers.
+    this._providers = providerOrder.map((providerKey) => {
+      const singleProviderConfig = providerConfig[providerKey];
+
+      try {
+        // Attempt to load the module and initialise it.
+        const module = require(singleProviderConfig.module);
+        return new module(singleProviderConfig.options);
+      } catch (err) {
+        // Return a useful error but retain the original error for debugging if required.
+        const newError = new Error(`A provider module (${providerKey}) could not be loaded: ${err.message}`);
+        newError.originalError = err;
+        throw newError;
+      }
+    });
+  }
+
+  /**
+   * Sends an email via the providers providing automatic failover if a provider is unavailable
+   *
+   * @param {ProviderSendOptions} sendOptions - Options to be used by the provider to send the email. See providers.md
+   * for more information on this object.
+   * @param {Object} options - Options for the operation of this send call.
+   * @param {Object} options.log - A function for logging debug info of the form
+   *    (tags: {Array<String>}}, message: {String})
+   *
+   */
+  async send(sendOptions, {log}) {
+    const errors = [];
+    let success = false;
+
+    // Step through each of the providers in order.
+    for (const provider of this._providers) {
+      let attempt = 0;
+      // Repeatedly attempt to send the email while under the failover thresholds and not successful.
+      while(attempt < this._failoverOptions.attempts && !success) {
+        attempt += 1;
+        log(['debug', 'providerManager'], `${provider.constructor.name} - Starting Attempt ${attempt}`);
+        try {
+          // Attempt to send the email
+          await provider.send(sendOptions);
+          log(['debug', 'providerManager'], `${provider.constructor.name} - Attempt ${attempt} succeeded`);
+          success = true;
+
+          // Short circuit and resolve with the successful send result.
+          return {
+            provider: provider.constructor.name
+          };
+        } catch(err) {
+          // Log a debug error and allow the while loop to repeat.
+          log(['debug', 'providerManager'], `${provider.constructor.name} - Attempt ${attempt} failed - ${err.message}`);
+          errors.push(err);
+        }
+      }
+    }
+
+    // Create an error and add all the errors generated by our attempts to assist in debugging.
+    const sendFailError = new Error('All providers failed to send');
+    sendFailError.allErrors = errors;
+    throw sendFailError;
+  }
+}
+
+/**
+ * Defaults for the failover options.
+ * @type {{attempts: number}}
+ */
+ProviderManager.FAILOVER_DEFAULTS = {
+  attempts: 3
+};
+
+module.exports = ProviderManager;

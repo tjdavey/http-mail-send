@@ -1,4 +1,5 @@
-const packageInfo = require('../../package.json');
+const {rootHandler} = require('./root');
+const {sendHandler, sendPayloadSchema} = require('./send');
 
 /**
  * Sets up all the required routes for this service.
@@ -11,11 +12,18 @@ function setupRoutes(server) {
   server.route({
     method: 'GET',
     path: '/',
-    handler: () => {
-      return {
-        service: packageInfo.name,
-        version: packageInfo.version
-      };
+    handler: rootHandler
+  });
+
+  // Route for sending emails
+  server.route({
+    method: 'POST',
+    path: '/send',
+    handler: sendHandler,
+    config: {
+      validate: {
+        payload: sendPayloadSchema
+      }
     }
   });
 }
