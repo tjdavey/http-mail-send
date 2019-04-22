@@ -46,8 +46,6 @@ export default function email(state = {}, action) {
         success: true,
         provider: action.provider
       };
-      // Reset the emailState to the default state.
-      newState.emailState = Object.assign({}, DEFAULT_STATE.emailState);
       break;
     case EMAIL_SEND_FAILURE:
       // Cancel isSending and update the lastSent information.

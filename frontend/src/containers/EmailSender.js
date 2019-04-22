@@ -54,6 +54,7 @@ class EmailSender extends Component {
           to={email.emailState.to}
           subject={email.emailState.subject}
           body={email.emailState.body}
+          lastSent={email.lastSent}
           isSending={email.isSending}
           onChange={this.onChange}
           onSend={this.onSend}

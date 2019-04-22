@@ -22,11 +22,24 @@ export function sendEmail(emailState) {
       method: 'POST',
       headers: {'Content-type': 'application/json; charset=UTF-8'},
       body: JSON.stringify(emailState)})
+    .then((res) => {
+      const contentType = res.headers.get('Content-Type');
+      if(contentType.match(/^application\/json.+/)) {
+        return res.json();
+      }
+
+      throw new Error(`Unexpected return HTTP Content Type: ${contentType}`);
+    })
     .then((result) => {
-      dispatch(sendEmailSuccess(result));
+      if(result.success) {
+        dispatch(sendEmailSuccess(result.provider));
+        return
+      }
+
+      throw new Error(result.message || result.error || "Unknown Error")
     })
     .catch((err) => {
-      dispatch(sendEmailFailure(err));
+      dispatch(sendEmailFailure(err.message));
     })
   }
 }

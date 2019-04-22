@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import {Form, Button} from 'react-bootstrap';
+import {Form, Button, Row, Col} from 'react-bootstrap';
 import { Editor } from 'react-draft-wysiwyg';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
+
+import Status from './Status';
 
 import '../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import './EmailForm.css';
@@ -17,7 +19,10 @@ class EmailForm extends Component {
     super(props);
 
     // Setup this initial editor state based on the state of the body property.
-    this.state = {editorState: this.getEditorStateFromContent(props.body)};
+    this.state = {
+      editorState: this.getEditorStateFromContent(props.body),
+      changedSinceSend: false
+    };
 
     this.onSend = this.onSend.bind(this);
     this.onChangeField = this.onChangeField.bind(this);
@@ -32,7 +37,7 @@ class EmailForm extends Component {
     */
     if(prevProps.body !== this.props.body &&
       this.props.body !== draftToHtml(convertToRaw(this.state.editorState.getCurrentContent()))) {
-      this.setState({editorState: this.getEditorStateFromContent(this.props.body)});
+      this.setState(Object.assign({}, this.state, {editorState: this.getEditorStateFromContent(this.props.body)}));
     }
   }
 
@@ -58,6 +63,7 @@ class EmailForm extends Component {
     event.stopPropagation();
     event.preventDefault();
 
+    this.setState(Object.assign({}, this.state, {changedSinceSend: false}));
     this.props.onSend();
   }
 
@@ -67,6 +73,7 @@ class EmailForm extends Component {
    */
   onChangeField(event) {
     const {onChange} = this.props;
+    this.setState(Object.assign({}, this.state, {changedSinceSend: true}));
     onChange(event.target.name, event.target.value);
   }
 
@@ -78,7 +85,7 @@ class EmailForm extends Component {
     const {onChange} = this.props;
 
     // Set the internal editorState
-    this.setState({editorState});
+    this.setState(Object.assign({}, this.state, {editorState, changedSinceSend: true}));
 
     // Push the raw editor content back to the parent.
     const rawContent = draftToHtml(convertToRaw(editorState.getCurrentContent()));
@@ -86,7 +93,10 @@ class EmailForm extends Component {
   }
 
   render() {
-    const {to, subject, isSending} = this.props;
+    const {to, subject, isSending, lastSent} = this.props;
+
+    // Status should be shown if a status is known and no changes have been made since last send
+    const showStatus = !isSending && lastSent.success !== undefined && !this.state.changedSinceSend;
 
     return (
       <Form onSubmit={this.onSend}>
@@ -114,13 +124,29 @@ class EmailForm extends Component {
           <Form.Label>Message: </Form.Label>
           <Editor
             editorState={this.state.editorState}
+            readOnly={isSending}
             wrapperClassName="form-control form-control-editor"
             toolbarClassName="form-control-editor-toolbar"
             editorClassName="form-control-editor-main"
             onEditorStateChange={this.onChangeEditor}
           />
         </Form.Group>
-        <Button type="submit" disabled={isSending}>{isSending ? 'Sending…' : 'Send Email'}</Button>
+        <Row>
+          <Col>
+            {showStatus && (
+              <Status lastSent={lastSent} />
+            )}
+          </Col>
+          <Col className="text-right">
+            <Button
+              type="submit"
+              className="float-right"
+              disabled={isSending}
+            >
+                {isSending ? 'Sending…' : 'Send Email'}
+            </Button>
+          </Col>
+        </Row>
       </Form>
     );
   }
