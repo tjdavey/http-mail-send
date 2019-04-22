@@ -13,6 +13,7 @@ describe('initServer', () => {
   const TEST_HOST = 'testhost';
   const TEST_NAME = 'test-server';
   const TEST_LOGLEVEL = 'info';
+  const TEST_CORS_ORIGINS = ['*'];
   const TEST_APP = {app: true};
 
   const hapiServer = {
@@ -53,6 +54,7 @@ describe('initServer', () => {
       host: TEST_HOST,
       name: TEST_NAME,
       logLevel: TEST_LOGLEVEL,
+      corsOrigins: TEST_CORS_ORIGINS,
       app: TEST_APP
     });
 
@@ -60,7 +62,15 @@ describe('initServer', () => {
     expect(bunyan.createLogger).toHaveBeenCalledWith({name: TEST_NAME, level: TEST_LOGLEVEL});
 
     // Ensure the server was setup as required
-    expect(Hapi.server).toHaveBeenCalledWith({port: TEST_PORT, host: TEST_HOST});
+    expect(Hapi.server).toHaveBeenCalledWith({
+      port: TEST_PORT,
+      host: TEST_HOST,
+      routes: {
+        cors: {
+          origin: TEST_CORS_ORIGINS
+        }
+      }
+    });
 
     // Ensure routes were configured
     expect(setupRoutes).toHaveBeenCalledWith(hapiServer);

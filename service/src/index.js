@@ -13,7 +13,6 @@ async function startService() {
   // Initialise a ProviderManager for use by this server.
   const pm = new ProviderManager(providerConfig, providerOrder, failoverOptions);
 
-
   await initServer(Object.assign({name: packageInfo.name, app: {pm}}, serverConfig));
 }
 

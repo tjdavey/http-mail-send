@@ -20,7 +20,7 @@ export function sendEmail(emailState) {
     // Fetch the
     fetch(process.env.REACT_APP_SEND_EMAIL_ENDPOINT, {
       method: 'POST',
-      headers: {'Content-type': 'application-json; charset=UTF-8'},
+      headers: {'Content-type': 'application/json; charset=UTF-8'},
       body: JSON.stringify(emailState)})
     .then((result) => {
       dispatch(sendEmailSuccess(result));
@@ -32,7 +32,7 @@ export function sendEmail(emailState) {
 }
 
 /**
- * Action creator which should be dispatched to initialise the email state.
+ * Action creator which should be dispatched
  * @returns {{type: string, provider: *}}
  */
 export function initEmail() {

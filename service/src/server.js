@@ -17,17 +17,25 @@ const {setupRoutes} = require('./routes');
  * @param {string} serverOptions.name - A name to uniquely identify this server (used for logging).
  * @param {string} serverOptions.logLevel - The minimum level of log messages to log. One of 'debug', 'info', 'warn',
  *    'error', 'fatal'.
+ * @param {string} serverOptions.corsOrigins - A set of accepted origins for CORS. This should be ["*"] in development
+ * to cope with the Chrome CORS bug (https://bugs.chromium.org/p/chromium/issues/detail?id=67743) but MUST be
+ * configured securely for production.
  * @param {string} serverOptions.app - Global application components available at any time through server.app.
  * @returns {HapiServer}
  */
-async function initServer({host, port, name, logLevel, app}) {
+async function initServer({host, port, name, logLevel, corsOrigins, app}) {
   // Setup a logger for this server and its activity.
   const serverLogger = bunyan.createLogger({name, level: logLevel});
 
   try {
     const server = Hapi.Server({
       port,
-      host
+      host,
+      routes: {
+        cors: {
+          origin: corsOrigins
+        }
+      }
     });
 
     // Setup all the required routes for this server.
