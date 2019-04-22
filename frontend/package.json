@@ -7,7 +7,7 @@
     "cross-fetch": "^3.0.2",
     "draft-js": "^0.10.5",
     "draftjs-to-html": "^0.8.4",
-    "immutable": "4",
+    "immutable": "^3.7.6",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.8",
     "react-dom": "^16.8.6",
@@ -21,8 +21,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "node_modules/.bin/eslint src/**/*.js"
+    "eject": "react-scripts eject"
   },
   "author": "Tristan Davey",
   "license": "MIT",
