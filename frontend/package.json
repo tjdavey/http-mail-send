@@ -5,9 +5,13 @@
   "dependencies": {
     "bootstrap": "^4.3.1",
     "cross-fetch": "^3.0.2",
+    "draft-js": "^0.10.5",
+    "draftjs-to-html": "^0.8.4",
+    "immutable": "4",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.8",
     "react-dom": "^16.8.6",
+    "react-draft-wysiwyg": "^1.13.2",
     "react-redux": "^7.0.2",
     "react-scripts": "2.1.8",
     "redux": "^4.0.1",

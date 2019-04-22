@@ -1,0 +1,17 @@
+.form-control.form-control-editor {
+  padding: 0;
+  height: auto;
+}
+
+.form-control-editor-toolbar {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-color: #ced4da;
+  border-width: 0 0 1px 0;
+}
+
+.form-control-editor-main {
+  padding: 0 10px;
+}
