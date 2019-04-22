@@ -58,7 +58,33 @@ security are integrity are managed out of the box.
 
 ### Frontend
 
+The frontend is configured using create-react-app and uses the
+redux-recommended seperation of logic-containing 'container' components
+and presentation components. A Promise code style was used here due to
+known compatability issues with async/await code style and some react
+utilities.
+
+Due to the time constraints react-bootstrap and the default bootstrap
+styles were used to minimise the necessity to build out styles and
+interactivity for some components.
+
+Yarn was also used for this project as this is the default configured
+package manager for create-react-app applications.
+
 #### Decisions, Caveats and Known Issues
+
+ - **No testing was included for any frontend components.** Due to time
+    constraints no testing was included for any of the React components,
+    or redux reducers. Ideally some basic snapshot testing would have
+    also been included.
+ - **HTML form validation is limited.** The user input collected on the
+    HTML form only includes the very based included validation (eg.
+    email field validation). This could be improved to provide users
+    with better feedback of erroneous data entered in fields.
+ - **Poor user feedback in error cases.** The user feedback in error
+    cases directly transposes error messages from the server to the UI.
+    The common cases here would be better handled with customised error
+    messages which provide the user with easier to understand messages.
 
 ## Getting Started
 
@@ -76,6 +102,7 @@ app subsitute the appropriate keys as required and run this command.
 SENDGRID_API_KEY=<Sendgrid API Key> MAILGUN_API_KEY=<Mailgun API Key> docker-compose up service frontend
 ```
 
+Once running the application will be available on http://localhost:8081
 
 ### Running the Service
 
@@ -94,8 +121,10 @@ will be available at http://localhost:8080.
 Using the default configuration the following environment variables
 must be defined in order to correctly configure the service.
 
-- `SENDGRID_API_KEY` - A sendgrid API key for sending emails through
+- `SENDGRID_API_KEY` - A Sendgrid API key for sending emails through
  Sendgrid.
+- `MAILGUN_API_KEY` - A Mailgun API key for sending emails through
+ Mailgun.
 
 Further documentation on the usage of the docker-compose CLI, including
 shutdown and log viewing can be found in the [docker-compose docs](https://docs.docker.com/compose/reference/overview/).
@@ -139,6 +168,9 @@ The following properties can be configured in the `server` object in
 
 - `port` - HTTP server port. Default: `8080`
 - `host` - HTTP server hostname. Default: `localhost`
+- `corsOrigins` - A list of valid CORS origins. This MUST be changed
+to a valid corsOrigin before production deployment. Default `[*]`
+- `logLevel` - The minimum level of logging to output. Default `info`
 
 ### Provider Configuration
 
@@ -209,11 +241,23 @@ The following keys can be set:
 - `attempt` - *Number* - The number of attempts to make for each
  provider in `providerOrder`.
 
+### Frontend Endpoint Configuration
+
+The frontend must be configured with a path to the endpoint for sending
+emails. This can be done by setting the `REACT_APP_SEND_EMAIL_ENDPOINT`
+environment variable when running the service.
+
+When run from docker this can be configured from `docker-compose.yml`
+and in development and deployment [create-react-app's `.env` files](https://facebook.github.io/create-react-app/docs/adding-custom-environment-variables#adding-development-environment-variables-in-env)
+can be utilised. See `frontend/.env.development` for an example of this.
+
 ## Development (and running the service locally).
 
 ### Prerequisites
 
 - Node.js 10.x
+- NPM 5.x+
+- Yarn
 
 ### Service
 
@@ -231,3 +275,15 @@ The following NPM scripts are provided and can be executed using
  - `lint` - Lint the style and syntax of the code.
 
 ### Frontend
+
+The frontend can be run locally by having the prerequisites installed
+and running `yarn install` to install all required dependencies.
+
+#### Scripts
+
+The following yarn scripts are provided and can be executed using
+`yarn`
+
+ - `start` - Serve a version of the frontend for local development.
+ - `build` - Build a deployable version of the frontend.
+ - `test` - Run the full test suite.
